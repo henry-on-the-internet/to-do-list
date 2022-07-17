@@ -3,9 +3,16 @@ import Todo from './components/Todo';
 import './App.css';
 import Form from './components/Form';
 import FilterButton from './components/FilterButton';
-import React, {useState} from 'react';
+import React, { useEffect, useRef, useState} from 'react';
 import { nanoid } from 'nanoid';
 
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 function App(props) {
   const [tasks, setTasks] = useState(props.tasks)
   const [filter, setFilter] = useState('All')
@@ -72,6 +79,13 @@ function App(props) {
   );
   const taskNoun = taskList.length !== 1 ? 'tasks' : 'task';
   const headingText = `${taskList.length} ${taskNoun} remaining`;
+  const listHeadingRef = useRef(null);
+  const prevTaskLength = usePrevious(tasks.length);
+  useEffect(() => {
+    if(tasks.length - prevTaskLength === -1){
+      listHeadingRef.current.focus();
+    }
+  }, [tasks.length, prevTaskLength]);
   return (
     <div className="todoapp stack-large">
       <h1>TodoMatic</h1>
@@ -79,7 +93,7 @@ function App(props) {
       <div className="filters btn-group stack-exception">
         {filterList}
       </div>
-      <h2 id="list-heading">
+      <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>
         {headingText}
       </h2>
       <ul
