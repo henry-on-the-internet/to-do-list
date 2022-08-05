@@ -8,8 +8,15 @@ function Form(props){
     }
     function handleSubmit(e){
         e.preventDefault();
-        props.addTask(name);
-        setName("");
+        if(name===''){
+          window.alert("To-do item' s name is empty");
+        } else if(!name.trim().length){
+          window.alert("To-do item' s name only has blanks");
+        } else{
+          props.addTask(name);
+          setName("");
+        }
+        
     }
     return(
       <form onSubmit={handleSubmit}>
